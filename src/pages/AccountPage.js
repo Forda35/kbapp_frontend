@@ -7,6 +7,8 @@ import Icon from "../components/Icon";
 import { useAuth } from "../context/AuthContext";
 import { getMyTickets, getCachedTickets } from "../api";
 import { COLORS, SPACING, RADIUS } from "../theme";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 const MenuItem = ({ iconName, label, value, onPress, danger }) => (
   <TouchableOpacity
@@ -37,7 +39,8 @@ export default function AccountPage() {
   const { user, logout } = useAuth();
   const [ticketCount, setTicketCount] = useState(0);
 
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
     const load = async () => {
       try {
         const t = await getMyTickets();
@@ -48,7 +51,8 @@ export default function AccountPage() {
       }
     };
     load();
-  }, []);
+  }, [])
+);
 
   const handleLogout = () => {
     Alert.alert(

@@ -9,6 +9,8 @@ import { BarChart } from "react-native-chart-kit";
 import { getAdminStats } from "../api";
 import { useAuth } from "../context/AuthContext";
 import { COLORS, SPACING, RADIUS } from "../theme";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 const { width } = Dimensions.get("window");
 const formatAriary = (a) => `${Number(a || 0).toLocaleString("fr-FR")} Ar`;
@@ -37,7 +39,9 @@ export default function AdminDashboardPage() {
     finally { setLoading(false); setRefreshing(false); }
   };
 
-  useEffect(() => { loadStats(); }, []);
+  useFocusEffect(
+  useCallback(() => { loadStats(); }, [loadStats])
+);
 
   if (user?.role !== "admin") {
     return (

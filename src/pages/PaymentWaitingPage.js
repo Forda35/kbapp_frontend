@@ -14,7 +14,16 @@ const formatAriary = (a) => `${Number(a).toLocaleString("fr-FR")} Ar`;
 
 export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCancel }) {
   const [status, setStatus] = useState("pending");
-  const [timeLeft, setTimeLeft] = useState(30 * 60);
+  // Calculer le temps restant réel à partir de motifExpiry
+const getInitialTimeLeft = () => {
+  if (payment?.motifExpiry) {
+    const remaining = Math.floor((new Date(payment.motifExpiry) - new Date()) / 1000);
+    return Math.max(0, remaining);
+  }
+  return 30 * 60;
+};
+
+const [timeLeft, setTimeLeft] = useState(getInitialTimeLeft);
   const [ticket, setTicket] = useState(null);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const pollingRef = useRef(null);
@@ -62,15 +71,19 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
           const updated = [...cached.filter((t) => t.id !== data.ticket.id), data.ticket];
           await cacheTickets(updated);
 
-          Alert.alert("🎉 Billet acheté !", "Votre billet a été confirmé avec succès !", [
+          Alert.alert("Billet acheté !", "Votre billet a été confirmé avec succès !", [
             { text: "Voir mon billet", onPress: () => onSuccess(data.ticket) },
           ]);
         } else if (data.status === "expired") {
-          clearInterval(pollingRef.current);
-          clearInterval(timerRef.current);
-          setStatus("expired");
-          onExpired();
-        }
+  clearInterval(pollingRef.current);
+  clearInterval(timerRef.current);
+  setStatus("expired");
+  // Nettoyer le cache — retirer le billet annulé
+  const cached = await getCachedTickets();
+  const cleaned = cached.filter((t) => t.id !== data.ticket?.id);
+  await cacheTickets(cleaned);
+  onExpired();
+}
       } catch (e) { console.error("Polling error:", e); }
     };
 

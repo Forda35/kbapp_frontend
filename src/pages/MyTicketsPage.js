@@ -8,6 +8,7 @@ import Icon from "../components/Icon";
 import QRCode from "react-native-qrcode-svg";
 import { getMyTickets, getCachedTickets, cacheTickets } from "../api";
 import { COLORS, SPACING, RADIUS } from "../theme";
+import { useFocusEffect } from "@react-navigation/native";
 
 const ScreenCapture = {
   preventScreenCaptureAsync: async () => {},
@@ -25,17 +26,28 @@ export default function MyTicketsPage() {
   const [selectedTicket, setSelectedTicket] = useState(null);
 
   const loadTickets = useCallback(async () => {
-    try {
-      const data = await getMyTickets();
-      if (Array.isArray(data)) { setTickets(data); await cacheTickets(data); }
-      else throw new Error();
-    } catch {
-      const cached = await getCachedTickets();
-      setTickets(cached);
-    } finally { setLoading(false); setRefreshing(false); }
-  }, []);
+  try {
+    const data = await getMyTickets();
+    if (Array.isArray(data)) {
+      // Ne garder que les billets confirmés
+      const confirmed = data.filter((t) => t.status === "confirmed" || t.qrCode);
+      setTickets(confirmed);
+      await cacheTickets(confirmed);
+    } else throw new Error();
+  } catch {
+    const cached = await getCachedTickets();
+    // Filtrer aussi dans le cache
+    const confirmed = cached.filter((t) => t.status === "confirmed" || t.qrCode);
+    setTickets(confirmed);
+  } finally {
+    setLoading(false);
+    setRefreshing(false);
+  }
+}, []);
 
-  useEffect(() => { loadTickets(); }, []);
+  useFocusEffect(
+  useCallback(() => { loadTickets(); }, [loadTickets])
+);
 
   useEffect(() => {
     if (selectedTicket) ScreenCapture.preventScreenCaptureAsync();
@@ -121,9 +133,16 @@ export default function MyTicketsPage() {
             </LinearGradient>
 
             <View style={styles.qrZone}>
-              {selectedTicket && (
-                <QRCode value={selectedTicket.qrCode} size={200} color={COLORS.bgPrimary} backgroundColor="#fff" />
-              )}
+              {selectedTicket && selectedTicket.qrCode ? (
+  <QRCode value={selectedTicket.qrCode} size={200} color={COLORS.bgPrimary} backgroundColor="#fff" />
+) : (
+  <View style={{ width: 200, height: 200, justifyContent: "center", alignItems: "center" }}>
+    <Icon name="warning" size={40} color={COLORS.error} />
+    <Text style={{ color: COLORS.error, fontSize: 13, textAlign: "center", marginTop: 10 }}>
+      QR code non disponible
+    </Text>
+  </View>
+)}
             </View>
 
             <View style={styles.qrInfoRow}>

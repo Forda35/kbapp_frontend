@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // ⚠️ Remplacez par l'IP de votre PC (pas localhost)
-export const API_URL = "http://10.69.40.211:5000/api";
+export const API_URL = "http://192.168.137.24:5000/api";
 
 const authFetch = async (endpoint, options = {}) => {
   const token = await AsyncStorage.getItem("token");
@@ -86,3 +86,5 @@ export const getCachedEvents = async () => {
   } catch { return []; }
 };
 
+export const checkPendingPayment = (eventId) =>
+  authFetch("/payments/pending/" + eventId);
