@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "KBApp",
+    "slug": "kbapp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.kbapp.mobile"
+    },
+    "android": {
+      "package": "com.kbapp.mobile"
+    },
+    "plugins": [
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "8998c4c8-faf7-4bfb-b667-a305f1cc0f90"
+      }
+    }
+  }
+}
