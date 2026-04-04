@@ -6,7 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/logo.png",
     "userInterfaceStyle": "dark",
-    "newArchEnabled": true,
     "splash": {
       "image": "./assets/logo.png",
       "resizeMode": "contain",
@@ -15,10 +14,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.kbapp.mobile",
-      "infoPlist": {
-        "NSCameraUsageDescription": "Utilisé pour scanner les QR codes des billets"
-      }
+      "bundleIdentifier": "com.kbapp.mobile"
     },
     "android": {
       "adaptiveIcon": {
