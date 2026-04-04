@@ -32,9 +32,7 @@
         "READ_SMS"
       ]
     },
-    "plugins": [
-      "expo-screen-capture"
-    ],
+    "plugins": [],
     "extra": {
       "eas": {
         "projectId": "8998c4c8-faf7-4bfb-b667-a305f1cc0f90"
