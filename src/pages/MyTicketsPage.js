@@ -9,11 +9,13 @@ import QRCode from "react-native-qrcode-svg";
 import { getMyTickets, getCachedTickets, cacheTickets } from "../api";
 import { COLORS, SPACING, RADIUS } from "../theme";
 import { useFocusEffect } from "@react-navigation/native";
+import * as ScreenCapture from "expo-screen-capture";
 
-const ScreenCapture = {
+/*const ScreenCapture = {
   preventScreenCaptureAsync: async () => {},
   allowScreenCaptureAsync: async () => {},
-};
+}; 
+*/
 
 const formatAriary = (a) => `${Number(a).toLocaleString("fr-FR")} Ar`;
 const formatDate = (d) =>

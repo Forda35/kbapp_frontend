@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
+import { Image } from "react-native";
 
 import LoginPage from "./src/pages/LoginPage";
 import RegisterPage from "./src/pages/RegisterPage";
@@ -42,8 +43,12 @@ function SplashScreen({ onFinish }) {
       <StatusBar barStyle="light-content" backgroundColor={COLORS.bgPrimary} />
       <Animated.View style={[styles.splashContent, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
         <View style={styles.logoContainer}>
-          <Text style={styles.logoText}>KB</Text>
-        </View>
+  <Image
+    source={require("./assets/logo.png")}
+    style={{ width: 80, height: 80, borderRadius: 20 }}
+    resizeMode="contain"
+  />
+</View>
         <Animated.View style={{ opacity: goldAnim }}>
           <Text style={styles.splashTitle}>KBApp</Text>
           <Text style={styles.splashTagline}>Votre billetterie premium</Text>

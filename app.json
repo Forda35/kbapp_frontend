@@ -4,20 +4,36 @@
     "slug": "kbapp",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0a1a"
+    },
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.kbapp.mobile"
+      "bundleIdentifier": "com.kbapp.mobile",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Utilisé pour scanner les QR codes des billets"
+      }
     },
     "android": {
-      "package": "com.kbapp.mobile"
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#0a0a1a"
+      },
+      "package": "com.kbapp.mobile",
+      "permissions": [
+        "INTERNET",
+        "RECEIVE_SMS",
+        "READ_SMS"
+      ]
     },
     "plugins": [
-      "expo-font"
+      "expo-screen-capture"
     ],
     "extra": {
       "eas": {

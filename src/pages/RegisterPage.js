@@ -7,6 +7,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Icon from "../components/Icon";
 import { registerUser } from "../api";
 import { COLORS, SPACING, RADIUS } from "../theme";
+import { Image } from "react-native";
 
 export default function RegisterPage({ navigation }) {
   const [email, setEmail] = useState("");
@@ -77,8 +78,12 @@ export default function RegisterPage({ navigation }) {
 
           <View style={styles.logoArea}>
             <View style={styles.logoBox}>
-              <Text style={styles.logoText}>KB</Text>
-            </View>
+  <Image
+    source={require("../../assets/logo.png")}
+    style={{ width: 46, height: 46, borderRadius: 10 }}
+    resizeMode="contain"
+  />
+</View>
             <Text style={styles.appName}>KBApp</Text>
           </View>
 

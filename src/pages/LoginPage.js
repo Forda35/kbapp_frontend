@@ -8,6 +8,7 @@ import Icon from "../components/Icon";
 import { useAuth } from "../context/AuthContext";
 import { loginUser } from "../api";
 import { COLORS, SPACING, RADIUS } from "../theme";
+import { Image } from "react-native";
 
 export default function LoginPage({ navigation }) {
   const [email, setEmail] = useState("");
@@ -48,8 +49,12 @@ export default function LoginPage({ navigation }) {
           {/* Logo */}
           <View style={styles.logoArea}>
             <View style={styles.logoBox}>
-              <Text style={styles.logoText}>KB</Text>
-            </View>
+  <Image
+    source={require("../../assets/logo.png")}
+    style={{ width: 54, height: 54, borderRadius: 12 }}
+    resizeMode="contain"
+  />
+</View>
             <Text style={styles.appName}>KBApp</Text>
             <Text style={styles.appSub}>Billetterie Premium</Text>
           </View>
