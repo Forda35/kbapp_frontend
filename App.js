@@ -9,6 +9,7 @@ import { Image } from "react-native";
 import LoginPage from "./src/pages/LoginPage";
 import RegisterPage from "./src/pages/RegisterPage";
 import MainTabs from "./src/pages/MainTabs";
+import ForgotPasswordPage from "./src/pages/ForgotPasswordPage";
 
 const COLORS = {
   bgPrimary: "#060914",
@@ -72,6 +73,7 @@ function AppNavigator() {
         <>
           <Stack.Screen name="Login" component={LoginPage} />
           <Stack.Screen name="Register" component={RegisterPage} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordPage} />
         </>
       ) : (
         // Pages connecté
