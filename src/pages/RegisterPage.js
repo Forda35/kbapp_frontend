@@ -51,8 +51,11 @@ export default function RegisterPage({ navigation }) {
             <Text style={{ color: COLORS.gold, fontWeight: "700" }}>{email}</Text>
           </Text>
           <Text style={styles.successSub}>
-            Cliquez sur le lien dans l'email pour activer votre compte, puis connectez-vous.
-          </Text>
+  Cliquez sur le lien dans l'email pour activer votre compte, puis connectez-vous.{"\n\n"}
+  <Text style={{ color: COLORS.warning, fontWeight: "700" }}>
+    Si vous ne trouvez pas l'email dans votre boîte de réception, vérifiez votre dossier spam ou indésirables.
+  </Text>
+</Text>
           <TouchableOpacity style={styles.goLoginBtn} onPress={() => navigation.navigate("Login")}>
             <LinearGradient colors={[COLORS.royalBlue, COLORS.royalBlueLight]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.goLoginGrad}>
               <Text style={styles.goLoginText}>Se connecter</Text>
