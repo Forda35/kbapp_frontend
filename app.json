@@ -29,11 +29,7 @@
       ]
     },
     "plugins": [],
-    "extra": {
-      "eas": {
-        "projectId": "8998c4c8-faf7-4bfb-b667-a305f1cc0f90"
-      }
-    },
+    
     "owner": "forda"
   }
 }
