@@ -84,12 +84,12 @@ export default function RegisterPage({ navigation }) {
     resizeMode="contain"
   />
 </View>
-            <Text style={styles.appName}>KBApp</Text>
+            <Text style={styles.appName}>KB Events</Text>
           </View>
 
           <View style={styles.card}>
             <Text style={styles.title}>Créer un compte</Text>
-            <Text style={styles.subtitle}>Rejoignez KBApp et accédez à tous vos événements.</Text>
+            <Text style={styles.subtitle}>Rejoignez KB Events et accédez à tous vos événements.</Text>
 
             {[
               { label: "Adresse email", value: email, setter: setEmail, icon: "mail-outline", keyboard: "email-address", secure: false },

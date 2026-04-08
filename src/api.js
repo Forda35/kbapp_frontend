@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// ⚠️ Remplacez par l'IP de votre PC (pas localhost)
 export const API_URL = "https://kbapp-backend.onrender.com/api";
 
 const authFetch = async (endpoint, options = {}) => {

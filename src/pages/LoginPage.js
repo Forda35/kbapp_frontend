@@ -55,7 +55,7 @@ export default function LoginPage({ navigation }) {
     resizeMode="contain"
   />
 </View>
-            <Text style={styles.appName}>KBApp</Text>
+            <Text style={styles.appName}>KB Events</Text>
             <Text style={styles.appSub}>Billetterie Premium</Text>
           </View>
 
@@ -70,7 +70,7 @@ export default function LoginPage({ navigation }) {
                 <Icon name="mail" size={18} color={COLORS.textMuted} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
-                  placeholder="votre@email.com"
+                  placeholder="exemple@gmail.com"
                   placeholderTextColor={COLORS.textMuted}
                   value={email}
                   onChangeText={setEmail}

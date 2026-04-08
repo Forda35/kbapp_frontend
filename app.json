@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "KBApp",
-    "slug": "kbapp",
+    "name": "KB Events",
+    "slug": "kb events",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
@@ -14,18 +14,16 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.kbapp.mobile"
+      "bundleIdentifier": "com.kbevents.mobile"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#0a0a1a"
       },
-      "package": "com.kbapp.mobile",
+      "package": "com.kbevents.mobile",
       "permissions": [
-        "INTERNET",
-        "RECEIVE_SMS",
-        "READ_SMS"
+        "INTERNET"
       ]
     },
     "plugins": [],

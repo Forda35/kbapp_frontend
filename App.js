@@ -51,7 +51,7 @@ function SplashScreen({ onFinish }) {
   />
 </View>
         <Animated.View style={{ opacity: goldAnim }}>
-          <Text style={styles.splashTitle}>KBApp</Text>
+          <Text style={styles.splashTitle}>KB Events</Text>
           <Text style={styles.splashTagline}>Votre billetterie premium</Text>
         </Animated.View>
       </Animated.View>
