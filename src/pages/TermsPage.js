@@ -17,7 +17,7 @@ export default function TermsPage({ navigation, route }) {
           <Text style={styles.backText}>Retour</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{title}</Text>
-        <Text style={styles.headerVersion}>Version 1.0 — Avril 2024</Text>
+        <Text style={styles.headerVersion}>Version 1.0 — Avril 2026</Text>
       </LinearGradient>
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
@@ -32,15 +32,15 @@ export default function TermsPage({ navigation, route }) {
 const TermsContent = () => (
   <>
     <Section title="1. Présentation de la plateforme">
-      KBApp est une plateforme de billetterie mobile permettant aux utilisateurs d'acheter des billets pour des événements organisés par des administrateurs indépendants.
+      KB Events est une plateforme de billetterie mobile permettant aux utilisateurs d'acheter des billets pour des événements organisés par des administrateurs indépendants.
     </Section>
 
     <Section title="2. Responsabilité des événements">
-      Les événements publiés sur la plateforme sont créés et organisés par des administrateurs indépendants. KBApp n'est pas responsable de l'organisation, du contenu, du déroulement ou de l'annulation des événements. Les administrateurs responsables de la création d'événements sont seuls responsables du contenu, de l'organisation et du déroulement de leurs événements. La plateforme agit uniquement comme outil de gestion et de distribution de billets.
+      Les événements publiés sur la plateforme sont créés et organisés par des administrateurs indépendants. KB Events n'est pas responsable de l'organisation, du contenu, du déroulement ou de l'annulation des événements. Les administrateurs responsables de la création d'événements sont seuls responsables du contenu, de l'organisation et du déroulement de leurs événements. La plateforme agit uniquement comme outil de gestion et de distribution de billets.
     </Section>
 
     <Section title="3. Paiement et billets">
-      Les billets sont générés automatiquement après confirmation du paiement via un système de code marchand externe (Mobile Money). La plateforme ne traite ni ne stocke les informations de paiement. Chaque billet est unique, personnel et non transférable. En cas de perte ou de vol, KBApp décline toute responsabilité.
+      Les billets sont générés automatiquement après confirmation du paiement via un système de code marchand externe (Mobile Money). La plateforme ne traite ni ne stocke les informations de paiement. Chaque billet est unique, personnel et non transférable. En cas de perte ou de vol, KB Events décline toute responsabilité.
     </Section>
 
     <Section title="4. Obligations des administrateurs">
@@ -76,7 +76,7 @@ const PrivacyContent = () => (
     </Section>
 
     <Section title="4. Paiements">
-      KBApp ne stocke aucune information bancaire ou de paiement. Les paiements sont effectués directement via les opérateurs Mobile Money (MVola, Orange Money, Airtel Money).
+      KB Events ne stocke aucune information bancaire ou de paiement. Les paiements sont effectués directement via les opérateurs Mobile Money (MVola, Orange Money, Airtel Money).
     </Section>
 
     <Section title="5. Vos droits">
