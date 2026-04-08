@@ -8,6 +8,7 @@ import Icon from "../components/Icon";
 import { registerUser } from "../api";
 import { COLORS, SPACING, RADIUS } from "../theme";
 import { Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 export default function RegisterPage({ navigation }) {
   const [email, setEmail] = useState("");
@@ -16,6 +17,7 @@ export default function RegisterPage({ navigation }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const handleRegister = async () => {
     setError("");
@@ -24,7 +26,7 @@ export default function RegisterPage({ navigation }) {
     if (password.length < 6) { setError("Le mot de passe doit contenir au moins 6 caractères"); return; }
     setLoading(true);
     try {
-      const data = await registerUser(email.trim().toLowerCase(), password);
+      const data = await registerUser(email.trim().toLowerCase(), password, termsAccepted);
       if (data.message?.toLowerCase().includes("vérif") || data.message?.toLowerCase().includes("envoy") || data.message?.toLowerCase().includes("créé")) {
         setSuccess(true);
       } else {
@@ -124,6 +126,41 @@ export default function RegisterPage({ navigation }) {
               </View>
             ) : null}
 
+            {/* Case à cocher CGU */}
+<View style={styles.termsRow}>
+  <TouchableOpacity
+    style={[styles.checkbox, termsAccepted && styles.checkboxChecked]}
+    onPress={() => setTermsAccepted(!termsAccepted)}
+    activeOpacity={0.8}
+  >
+    {termsAccepted && <Icon name="checkmark-circle" size={20} color={COLORS.gold} />}
+  </TouchableOpacity>
+  <Text style={styles.termsText}>
+    J'accepte les{" "}
+    <Text
+      style={styles.termsLink}
+      onPress={() => navigation.navigate("Terms", { type: "terms" })}
+    >
+      Conditions d'utilisation
+    </Text>
+    {" "}et la{" "}
+    <Text
+      style={styles.termsLink}
+      onPress={() => navigation.navigate("Terms", { type: "privacy" })}
+    >
+      Politique de confidentialité
+    </Text>
+  </Text>
+</View>
+
+{/* Bouton désactivé si non coché */}
+<TouchableOpacity
+  style={[styles.registerBtn, !termsAccepted && styles.registerBtnDisabled]}
+  onPress={handleRegister}
+  disabled={loading || !termsAccepted}
+  activeOpacity={0.85}
+></TouchableOpacity>
+
             <TouchableOpacity style={styles.registerBtn} onPress={handleRegister} disabled={loading} activeOpacity={0.85}>
               <LinearGradient colors={[COLORS.royalBlue, COLORS.royalBlueLight]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.registerBtnGrad}>
                 {loading ? <ActivityIndicator color={COLORS.gold} /> : <Text style={styles.registerBtnText}>Créer mon compte</Text>}
@@ -202,4 +239,40 @@ const styles = StyleSheet.create({
   goLoginBtn: { borderRadius: RADIUS.md, overflow: "hidden", width: "100%" },
   goLoginGrad: { paddingVertical: 16, alignItems: "center", borderRadius: RADIUS.md, borderWidth: 1.5, borderColor: COLORS.gold + "60" },
   goLoginText: { color: COLORS.gold, fontSize: 16, fontWeight: "800", letterSpacing: 1 },
+  termsRow: {
+  flexDirection: "row",
+  alignItems: "flex-start",
+  gap: 12,
+  marginBottom: 20,
+  marginTop: 4,
+},
+checkbox: {
+  width: 26,
+  height: 26,
+  borderRadius: 8,
+  borderWidth: 2,
+  borderColor: COLORS.border,
+  backgroundColor: COLORS.bgPrimary,
+  justifyContent: "center",
+  alignItems: "center",
+  marginTop: 1,
+},
+checkboxChecked: {
+  borderColor: COLORS.gold,
+  backgroundColor: COLORS.royalBlue + "44",
+},
+termsText: {
+  color: COLORS.textSecondary,
+  fontSize: 13,
+  lineHeight: 20,
+  flex: 1,
+},
+termsLink: {
+  color: COLORS.gold,
+  fontWeight: "700",
+  textDecorationLine: "underline",
+},
+registerBtnDisabled: {
+  opacity: 0.4,
+},
 });

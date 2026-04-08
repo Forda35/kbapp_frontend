@@ -10,6 +10,7 @@ import LoginPage from "./src/pages/LoginPage";
 import RegisterPage from "./src/pages/RegisterPage";
 import MainTabs from "./src/pages/MainTabs";
 import ForgotPasswordPage from "./src/pages/ForgotPasswordPage";
+import TermsPage from "./src/pages/TermsPage";
 
 const COLORS = {
   bgPrimary: "#060914",
@@ -74,10 +75,14 @@ function AppNavigator() {
           <Stack.Screen name="Login" component={LoginPage} />
           <Stack.Screen name="Register" component={RegisterPage} />
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordPage} />
+          <Stack.Screen name="Terms" component={TermsPage} />
         </>
       ) : (
         // Pages connecté
+        <>
         <Stack.Screen name="Main" component={MainTabs} />
+        <Stack.Screen name="Terms" component={TermsPage} />
+        </>
       )}
     </Stack.Navigator>
   );

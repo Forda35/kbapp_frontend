@@ -9,6 +9,8 @@ import { getMyTickets, getCachedTickets } from "../api";
 import { COLORS, SPACING, RADIUS } from "../theme";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
+import { deleteAccount } from "../api";
+import { useNavigation } from "@react-navigation/native";
 
 const MenuItem = ({ iconName, label, value, onPress, danger }) => (
   <TouchableOpacity
@@ -36,6 +38,7 @@ const MenuItem = ({ iconName, label, value, onPress, danger }) => (
 );
 
 export default function AccountPage() {
+  const navigation = useNavigation();
   const { user, logout } = useAuth();
   const [ticketCount, setTicketCount] = useState(0);
 
@@ -64,6 +67,28 @@ export default function AccountPage() {
       ]
     );
   };
+
+  const handleDeleteAccount = () => {
+  Alert.alert(
+    "Supprimer mon compte",
+    "Cette action est irréversible. Tous vos billets non utilisés seront perdus. Êtes-vous sûr ?",
+    [
+      { text: "Annuler", style: "cancel" },
+      {
+        text: "Supprimer définitivement",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await deleteAccount();
+            logout();
+          } catch {
+            Alert.alert("Erreur", "Impossible de supprimer le compte. Réessayez.");
+          }
+        },
+      },
+    ]
+  );
+};
 
   const roleLabel =
     user?.role === "admin" ? "Administrateur" :
@@ -151,15 +176,31 @@ export default function AccountPage() {
 
       {/* À propos */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>À propos</Text>
-        <View style={styles.menuCard}>
-          <MenuItem iconName="information-circle" label="Version de l'app" value="1.0.0" />
-          <View style={styles.divider} />
-          <MenuItem iconName="document-text" label="Conditions d'utilisation" onPress={() => {}} />
-          <View style={styles.divider} />
-          <MenuItem iconName="lock-closed" label="Politique de confidentialité" onPress={() => {}} />
-        </View>
-      </View>
+  <Text style={styles.sectionTitle}>À propos</Text>
+  <View style={styles.menuCard}>
+    <MenuItem iconName="information-circle" label="Version de l'app" value="1.0.0" />
+    <View style={styles.divider} />
+    <MenuItem
+      iconName="document-text"
+      label="Conditions d'utilisation"
+      onPress={() => navigation.navigate("Terms", { type: "terms" })}
+    />
+    <View style={styles.divider} />
+    <MenuItem
+      iconName="lock-closed"
+      label="Politique de confidentialité"
+      onPress={() => navigation.navigate("Terms", { type: "privacy" })}
+    />
+  </View>
+</View>
+
+{/* Suppression de compte */}
+<View style={[styles.section, { marginBottom: 16 }]}>
+  <TouchableOpacity style={styles.deleteBtn} onPress={handleDeleteAccount}>
+    <Icon name="close-circle" size={20} color={COLORS.error} />
+    <Text style={styles.deleteText}>Supprimer mon compte</Text>
+  </TouchableOpacity>
+</View>
 
       {/* Déconnexion */}
       <View style={[styles.section, { marginBottom: 40 }]}>
@@ -239,4 +280,16 @@ const styles = StyleSheet.create({
     borderColor: COLORS.error + "60", borderRadius: RADIUS.lg, paddingVertical: 16,
   },
   logoutText: { color: COLORS.error, fontSize: 16, fontWeight: "800" },
+  deleteBtn: {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 10,
+  backgroundColor: COLORS.error + "10",
+  borderWidth: 1,
+  borderColor: COLORS.error + "40",
+  borderRadius: RADIUS.lg,
+  paddingVertical: 14,
+},
+deleteText: { color: COLORS.error, fontSize: 15, fontWeight: "700" },
 });

@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const API_URL = "https://kbapp-backend.onrender.com/api";
+export const API_URL = "http://192.168.137.24:5000/api";
 
 const authFetch = async (endpoint, options = {}) => {
   const token = await AsyncStorage.getItem("token");
@@ -18,10 +18,10 @@ const authFetch = async (endpoint, options = {}) => {
   }
 };
 
-export const registerUser = (email, password) =>
+export const registerUser = (email, password, termsAccepted) =>
   authFetch("/users/register", {
     method: "POST",
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, termsAccepted }),
   });
 
 export const loginUser = (email, password) =>
@@ -87,3 +87,7 @@ export const getCachedEvents = async () => {
 
 export const checkPendingPayment = (eventId) =>
   authFetch("/payments/pending/" + eventId);
+
+export const deleteAccount = () =>
+  authFetch("/users/delete-account", { method: "DELETE" });
+
