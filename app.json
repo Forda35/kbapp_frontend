@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "KB Events",
-    "slug": "kbevents",
+    "slug": "kbapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
@@ -26,9 +26,14 @@
       "package": "com.kbevents.app",
       "permissions": [
         "INTERNET"
-      ]
+      ],
+      "versionCode": 2
     },
-    "plugins": [],
+    "plugins": [
+      "expo-font",
+      "expo-secure-store",
+      "expo-asset"
+    ],
     "owner": "forda",
     "extra": {
       "eas": {
