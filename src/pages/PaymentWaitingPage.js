@@ -57,7 +57,7 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
         const cached = await getCachedTickets();
         const updated = [...cached.filter((t) => t.id !== res.ticket.id), res.ticket];
         await cacheTickets(updated);
-        Alert.alert("🎉 Billet acheté !", "Votre paiement Orange Money a été confirmé !", [
+        Alert.alert("Billet acheté !", "Votre paiement Orange Money a été confirmé !", [
           { text: "Voir mon billet", onPress: () => onSuccess(res.ticket) },
         ]);
       } else {
