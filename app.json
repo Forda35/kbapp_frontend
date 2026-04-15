@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "KB Events",
-    "slug": "kbapp",
+    "slug": "kbevents",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
@@ -16,14 +16,14 @@
     ],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.kbevents.mobile"
+      "bundleIdentifier": "com.kbevents.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#0a0a1a"
       },
-      "package": "com.kbevents.mobile",
+      "package": "com.kbevents.app",
       "permissions": [
         "INTERNET"
       ]
