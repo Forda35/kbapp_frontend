@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Icon from "../components/Icon";
@@ -6,11 +6,20 @@ import { COLORS, RADIUS, SPACING } from "../theme";
 
 const formatAriary = (a) => `${Number(a).toLocaleString("fr-FR")} Ar`;
 
+// Seuil : description considérée "longue" au-delà de 100 caractères
+const DESC_THRESHOLD = 100;
+
 export default function EventCard({ event, bought, onPress }) {
+  const [expanded, setExpanded] = useState(false);
+
   const date = new Date(event.date);
   const day = date.getDate();
   const month = date.toLocaleDateString("fr-FR", { month: "short" }).toUpperCase();
-  const fullDate = date.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "long", year: "numeric" });
+  const fullDate = date.toLocaleDateString("fr-FR", {
+    weekday: "short", day: "numeric", month: "long", year: "numeric",
+  });
+
+  const isLong = event.description && event.description.length > DESC_THRESHOLD;
 
   return (
     <TouchableOpacity
@@ -18,7 +27,6 @@ export default function EventCard({ event, bought, onPress }) {
       onPress={() => !bought && onPress && onPress(event)}
       activeOpacity={bought ? 1 : 0.85}
     >
-      {/* Barre supérieure */}
       <LinearGradient
         colors={[COLORS.royalBlue, COLORS.royalBlueDark]}
         start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
@@ -26,13 +34,11 @@ export default function EventCard({ event, bought, onPress }) {
       />
 
       <View style={styles.body}>
-        {/* Date stylisée */}
         <View style={styles.dateBox}>
           <Text style={styles.dateDay}>{day}</Text>
           <Text style={styles.dateMonth}>{month}</Text>
         </View>
 
-        {/* Contenu */}
         <View style={styles.content}>
           <Text style={styles.title} numberOfLines={2}>{event.title}</Text>
 
@@ -48,7 +54,34 @@ export default function EventCard({ event, bought, onPress }) {
             <Text style={styles.dateText}>{fullDate}</Text>
           </View>
 
-          <Text style={styles.desc} numberOfLines={2}>{event.description}</Text>
+          {/* Description — tronquée par défaut si longue */}
+          <Text
+            style={styles.desc}
+            numberOfLines={expanded ? undefined : 2}
+          >
+            {event.description}
+          </Text>
+
+          {/* Bouton Voir plus / Voir moins — uniquement si description longue */}
+          {isLong && (
+            <TouchableOpacity
+              style={styles.expandBtn}
+              onPress={(e) => {
+                e.stopPropagation?.();
+                setExpanded((v) => !v);
+              }}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.expandBtnText}>
+                {expanded ? "Voir moins" : "Voir plus"}
+              </Text>
+              <Icon
+                name={expanded ? "close-circle" : "information-circle"}
+                size={13}
+                color={COLORS.royalBlueLight}
+              />
+            </TouchableOpacity>
+          )}
 
           <View style={styles.footer}>
             <Text style={styles.price}>{formatAriary(event.price)}</Text>
@@ -59,7 +92,11 @@ export default function EventCard({ event, bought, onPress }) {
                 <Text style={styles.boughtText}>Billet obtenu</Text>
               </View>
             ) : (
-              <TouchableOpacity style={styles.buyBtn} onPress={() => onPress && onPress(event)} activeOpacity={0.85}>
+              <TouchableOpacity
+                style={styles.buyBtn}
+                onPress={() => onPress && onPress(event)}
+                activeOpacity={0.85}
+              >
                 <LinearGradient
                   colors={[COLORS.royalBlue, COLORS.royalBlueLight]}
                   start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
@@ -74,7 +111,6 @@ export default function EventCard({ event, bought, onPress }) {
         </View>
       </View>
 
-      {/* Effet billet perforé */}
       <View style={styles.perforated}>
         <View style={styles.hole} />
         <View style={styles.dashedLine} />
@@ -104,8 +140,22 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center", gap: 4, marginBottom: 4 },
   locationText: { color: COLORS.textMuted, fontSize: 12, flex: 1 },
   dateText: { color: COLORS.textMuted, fontSize: 12, flex: 1 },
-  desc: { color: COLORS.textSecondary, fontSize: 13, lineHeight: 18, marginBottom: 12, marginTop: 2 },
-  footer: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  desc: {
+    color: COLORS.textSecondary, fontSize: 13,
+    lineHeight: 18, marginTop: 2, marginBottom: 4,
+  },
+  expandBtn: {
+    flexDirection: "row", alignItems: "center", gap: 4,
+    marginBottom: 8, alignSelf: "flex-start",
+    paddingVertical: 2,
+  },
+  expandBtnText: {
+    color: COLORS.royalBlueLight, fontSize: 12, fontWeight: "700",
+  },
+  footer: {
+    flexDirection: "row", justifyContent: "space-between",
+    alignItems: "center", marginTop: 8,
+  },
   price: { color: COLORS.gold, fontSize: 18, fontWeight: "900" },
   boughtBadge: {
     flexDirection: "row", alignItems: "center", gap: 5,
@@ -121,7 +171,17 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.md, borderWidth: 1, borderColor: COLORS.gold + "55",
   },
   buyBtnText: { color: COLORS.gold, fontWeight: "800", fontSize: 13 },
-  perforated: { flexDirection: "row", alignItems: "center", paddingHorizontal: 8, paddingBottom: 8 },
-  hole: { width: 12, height: 12, borderRadius: 6, backgroundColor: COLORS.bgPrimary, borderWidth: 1, borderColor: COLORS.border },
-  dashedLine: { flex: 1, height: 1, borderWidth: 1, borderColor: COLORS.border, borderStyle: "dashed", marginHorizontal: 4 },
+  perforated: {
+    flexDirection: "row", alignItems: "center",
+    paddingHorizontal: 8, paddingBottom: 8,
+  },
+  hole: {
+    width: 12, height: 12, borderRadius: 6,
+    backgroundColor: COLORS.bgPrimary,
+    borderWidth: 1, borderColor: COLORS.border,
+  },
+  dashedLine: {
+    flex: 1, height: 1, borderWidth: 1,
+    borderColor: COLORS.border, borderStyle: "dashed", marginHorizontal: 4,
+  },
 });
