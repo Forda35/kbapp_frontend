@@ -27,15 +27,22 @@
       "permissions": [
         "INTERNET"
       ],
-      "versionCode": 6,
-      "targetSdkVersion": 35,
-      "compileSdkVersion": 35,
-      "buildToolsVersion": "35.0.0"
+      "versionCode": 7
     },
     "plugins": [
       "expo-font",
       "expo-secure-store",
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "targetSdkVersion": 35,
+            "compileSdkVersion": 35,
+            "buildToolsVersion": "35.0.0"
+          }
+        }
+      ]
     ],
     "owner": "forda",
     "extra": {
