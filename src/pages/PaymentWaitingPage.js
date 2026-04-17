@@ -71,7 +71,7 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
     }
     const numero = payment?.merchantCode?.replace(/\s/g, "") || "";
     const montant = Math.round(payment?.amount) || "";
-    const ussdCode = `#144*1*1*${numero}*${numero}*${montant}#`;
+    const ussdCode = `#144*1*1*${numero}*${numero}*${montant}*2#`;
     const url = `tel:${ussdCode.replace(/#/g, '%23')}`;
 
     try {
