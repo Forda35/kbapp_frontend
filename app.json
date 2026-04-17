@@ -43,8 +43,8 @@
       ],
       "queries": {
         "apps": [
-          "com.orange.orangemoney.madagascar",
-          "com.airtel.africa.myairtel"
+          "com.orange.orangemoneyafrique",
+          "com.airtel.africa.selfcare"
         ]
       },
       "versionCode": 9

@@ -8,7 +8,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Icon from "../components/Icon";
 import QRCode from "react-native-qrcode-svg";
 import { COLORS, SPACING, RADIUS } from "../theme";
-import { API_URL, confirmOrangePayment } from "../api";
+import { API_URL, cacheTickets, getCachedTickets, confirmOrangePayment } from "../api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const formatAriary = (a) => `${Number(a).toLocaleString("fr-FR")} Ar`;
@@ -49,38 +49,27 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
     setTimeout(() => setCopiedMotif(false), 2000);
   };
 
-  // --- Ouverture des Applications (Logic Corrigée avec Alerte) ---
+  // --- Ouverture des Applications (Correction Package & Fallback) ---
   const handleOpenApp = async () => {
+    // NOM DU PACKAGE CORRIGÉ POUR ORANGE
     const packageName = isOrange
-      ? "com.orange.orangemoney.madagascar" 
-      : "com.airtel.africa.myairtel";
+      ? "com.orange.orangemoneyafrique" 
+      : "com.airtel.africa.selfcare";
 
     if (Platform.OS === 'android') {
       const intentUrl = `intent:#Intent;package=${packageName};end`;
       const marketUrl = `market://details?id=${packageName}`;
 
       try {
-        // Tentative 1 : Ouverture directe
+        // Tentative 1 : Ouverture directe via Intent
         await Linking.openURL(intentUrl);
       } catch (error) {
-        // Tentative 2 : Alerte avant redirection Play Store
-        Alert.alert(
-          isOrange ? "Orange Money" : "Airtel Money",
-          "Nous allons vous diriger vers l'application officielle pour effectuer votre transfert.",
-          [
-            { 
-              text: "Continuer", 
-              onPress: async () => {
-                try {
-                  await Linking.openURL(marketUrl);
-                } catch (err) {
-                  Alert.alert("Erreur", "Impossible d'ouvrir le Play Store.");
-                }
-              } 
-            },
-            { text: "Annuler", style: "cancel" }
-          ]
-        );
+        // Tentative 2 : Redirection Play Store (Affichera "Ouvrir" si installée)
+        try {
+          await Linking.openURL(marketUrl);
+        } catch (err) {
+          Alert.alert("Erreur", "Impossible de trouver l'application.");
+        }
       }
     } else {
       // iOS
@@ -100,7 +89,6 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
     }
     const numero = payment?.merchantCode?.replace(/\s/g, "") || "";
     const montant = Math.round(payment?.amount) || "";
-    // Format : #144*1*1*Numero*Numero*Montant*2#
     const ussdCode = `#144*1*1*${numero}*${numero}*${montant}*2#`;
     const url = `tel:${ussdCode.replace(/#/g, '%23')}`;
 
@@ -231,13 +219,13 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
         <View style={styles.instructCard}>
           <View style={styles.instructRow}>
             <Text style={styles.instructLabel}>{destinationLabel}</Text>
-            <div style={styles.valueWithBtn}>
+            <View style={styles.valueWithBtn}>
               <Text numberOfLines={1} ellipsizeMode="tail" style={styles.merchantValue}>{payment.merchantCode}</Text>
               <TouchableOpacity style={styles.copyBtnSmall} onPress={handleCopyCode}>
                 <Icon name={copiedCode ? "checkmark" : "copy-outline"} size={12} color={copiedCode ? COLORS.success : COLORS.gold} />
                 <Text style={styles.copyBtnTextSmall}>{copiedCode ? "OK" : "Copier"}</Text>
               </TouchableOpacity>
-            </div>
+            </View>
           </View>
           <View style={styles.instructDivider} />
           <View style={styles.instructRow}>
@@ -249,7 +237,7 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
               <View style={styles.instructDivider} />
               <View style={styles.instructRow}>
                 <Text style={styles.instructLabel}>Motif</Text>
-                <div style={styles.valueWithBtn}>
+                <View style={styles.valueWithBtn}>
                   <View style={styles.motifBox}>
                     <Text numberOfLines={1} ellipsizeMode="tail" style={styles.motifText}>{payment.motif}</Text>
                   </View>
@@ -257,7 +245,7 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
                     <Icon name={copiedMotif ? "checkmark" : "copy-outline"} size={12} color={copiedMotif ? COLORS.success : COLORS.gold} />
                     <Text style={styles.copyBtnTextSmall}>{copiedMotif ? "OK" : "Copier"}</Text>
                   </TouchableOpacity>
-                </div>
+                </View>
               </View>
             </>
           )}
