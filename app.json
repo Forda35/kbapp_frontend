@@ -16,7 +16,13 @@
     ],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.kbevents.app"
+      "bundleIdentifier": "com.kbevents.app",
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": [
+          "orangemoney",
+          "airtelmoney"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -27,7 +33,27 @@
       "permissions": [
         "INTERNET"
       ],
-      "versionCode": 7
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": {
+            "scheme": "kbevents"
+          }
+        }
+      ],
+      "queries": {
+        "intentFilters": [
+          {
+            "action": "android.intent.action.VIEW",
+            "package": "com.orange.orangemoney.madagascar"
+          },
+          {
+            "action": "android.intent.action.VIEW",
+            "package": "com.airtel.africa.myairtel"
+          }
+        ]
+      },
+      "versionCode": 8
     },
     "plugins": [
       "expo-font",
