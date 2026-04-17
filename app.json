@@ -42,18 +42,12 @@
         }
       ],
       "queries": {
-        "intentFilters": [
-          {
-            "action": "android.intent.action.VIEW",
-            "package": "com.orange.orangemoney.madagascar"
-          },
-          {
-            "action": "android.intent.action.VIEW",
-            "package": "com.airtel.africa.myairtel"
-          }
+        "apps": [
+          "com.orange.orangemoney.madagascar",
+          "com.airtel.africa.myairtel"
         ]
       },
-      "versionCode": 8
+      "versionCode": 9
     },
     "plugins": [
       "expo-font",

@@ -36,6 +36,7 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
   const isOrange = payment?.method === "Orange Money";
   const destinationLabel = isOrange ? "Numéro Orange" : "Code marchand Airtel";
 
+  // --- Fonctions de Copie ---
   const handleCopyCode = () => {
     Clipboard.setString(payment?.merchantCode || "");
     setCopiedCode(true);
@@ -48,30 +49,44 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
     setTimeout(() => setCopiedMotif(false), 2000);
   };
 
+  // --- Ouverture des Applications (Correction Android Build) ---
   const handleOpenApp = async () => {
     const packageName = isOrange
       ? "com.orange.orangemoney.madagascar"
       : "com.airtel.africa.myairtel";
-    
-    const url = Platform.OS === 'android' 
-      ? `intent://launch/#Intent;package=${packageName};end`
-      : `${isOrange ? 'orangemoney' : 'airtelmoney'}://`; 
 
-    try {
-      await Linking.openURL(url);
-    } catch {
-      Alert.alert("Note", `L'application n'a pas pu être lancée automatiquement.`);
+    if (Platform.OS === 'android') {
+      // Format Intent Android pour forcer l'ouverture par package
+      const intentUrl = `intent:#Intent;package=${packageName};end`;
+      try {
+        await Linking.openURL(intentUrl);
+      } catch (error) {
+        Alert.alert(
+          "Application non trouvée",
+          `L'application ${isOrange ? 'Orange' : 'Airtel'} Money n'est pas détectée.`
+        );
+      }
+    } else {
+      // Format iOS
+      const scheme = isOrange ? "orangemoney://" : "airtelmoney://";
+      try {
+        await Linking.openURL(scheme);
+      } catch (error) {
+        Alert.alert("Note", "L'application n'est pas installée sur cet appareil.");
+      }
     }
   };
 
+  // --- Lancement USSD ---
   const handleUSSD = async () => {
     if (!isOrange) {
-      Alert.alert("Bientôt disponible", "Le USSD Airtel Money sera bientôt disponible.");
+      Alert.alert("Bientôt disponible", "Le USSD Airtel Money sera disponible prochainement.");
       return;
     }
     const numero = payment?.merchantCode?.replace(/\s/g, "") || "";
     const montant = Math.round(payment?.amount) || "";
-    const ussdCode = `#144*1*1*${numero}*${numero}*${montant}*2#`;
+    // Format : #144*1*1*Numero*Numero*Montant#
+    const ussdCode = `#144*1*1*${numero}*${numero}*${montant}#`;
     const url = `tel:${ussdCode.replace(/#/g, '%23')}`;
 
     try {
@@ -81,31 +96,37 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
     }
   };
 
+  // --- Confirmation Manuelle Orange ---
   const handleOrangeConfirm = async () => {
     const trimmed = transactionId.trim();
     if (trimmed.length < 4) {
-      Alert.alert("ID manquant", "Veuillez copier l'ID reçu par SMS et le coller ici.");
+      Alert.alert("ID manquant", "Veuillez copier le Transaction ID reçu par SMS et le coller ici.");
       return;
     }
     setConfirmLoading(true);
     try {
       const res = await confirmOrangePayment(payment.id, trimmed);
       if (res.ticket) {
-        clearInterval(pollingRef.current);
-        clearInterval(timerRef.current);
+        stopPolling();
         setStatus("completed");
         setTicket(res.ticket);
         onSuccess(res.ticket);
       } else {
-        Alert.alert("Erreur", res.message || "ID non trouvé ou déjà utilisé.");
+        Alert.alert("Erreur", res.message || "Confirmation impossible.");
       }
     } catch (e) {
-      Alert.alert("Erreur", "Vérifiez votre connexion internet.");
+      Alert.alert("Erreur", "Connexion interrompue.");
     } finally {
       setConfirmLoading(false);
     }
   };
 
+  const stopPolling = () => {
+    clearInterval(pollingRef.current);
+    clearInterval(timerRef.current);
+  };
+
+  // --- Polling & Timer ---
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
@@ -129,25 +150,20 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
         });
         const data = await res.json();
         if (data.status === "completed" && data.ticket) {
-          clearInterval(pollingRef.current);
-          clearInterval(timerRef.current);
+          stopPolling();
           setStatus("completed");
           setTicket(data.ticket);
           onSuccess(data.ticket);
         } else if (data.status === "expired") {
-          clearInterval(pollingRef.current);
-          clearInterval(timerRef.current);
+          stopPolling();
           setStatus("expired");
           onExpired();
         }
-      } catch (e) { /* Polling silancieux */ }
+      } catch (e) { /* Polling silencieux */ }
     };
 
     pollingRef.current = setInterval(poll, 5000);
-    return () => {
-      clearInterval(timerRef.current);
-      clearInterval(pollingRef.current);
-    };
+    return () => stopPolling();
   }, []);
 
   const formatTime = (s) => {
@@ -178,7 +194,9 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
     <View style={styles.container}>
       <LinearGradient colors={[COLORS.bgPrimary, COLORS.bgSecondary]} style={StyleSheet.absoluteFill} />
       <View style={styles.header}>
-        <TouchableOpacity onPress={onCancel} style={styles.cancelTopBtn}><Icon name="close" size={20} color={COLORS.textMuted} /></TouchableOpacity>
+        <TouchableOpacity onPress={onCancel} style={styles.cancelTopBtn}>
+          <Icon name="close" size={20} color={COLORS.textMuted} />
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>Paiement en attente</Text>
       </View>
 
@@ -188,13 +206,13 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
           <Text style={styles.timerLabel}>restant</Text>
         </View>
 
-        {/* --- INSTRUCTIONS TEXTUELLES --- */}
+        {/* Instructions selon l'opérateur */}
         <View style={styles.infoCard}>
           <Icon name="information-circle-outline" size={18} color={COLORS.gold} />
           <Text style={styles.infoText}>
             {isOrange 
-              ? "Notez votre Transaction ID après le transfert, copiez-le et collez-le ci-dessous. Vous avez le choix entre l'application Orange ou le code USSD."
-              : "Il est impératif d'indiquer le motif généré ci-dessous lors de votre transfert pour que le paiement puisse être vérifié automatiquement."}
+              ? "Notez votre Transaction ID après le transfert, copiez-le et collez-le ci-dessous. Vous pouvez utiliser l'application Orange ou le code USSD."
+              : "Il est impératif d'indiquer le motif généré ci-dessous lors de votre transfert pour que le paiement soit vérifié automatiquement."}
           </Text>
         </View>
 
