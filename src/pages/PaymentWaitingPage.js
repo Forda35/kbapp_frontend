@@ -53,7 +53,7 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
   const handleOpenApp = async () => {
     // NOM DU PACKAGE CORRIGÉ POUR ORANGE
     const packageName = isOrange
-      ? "com.orange.orange money" 
+      ? "com.orange.orangemoney" 
       : "com.airtel.africa.myairtel";
 
     if (Platform.OS === 'android') {
