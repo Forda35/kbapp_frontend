@@ -64,7 +64,11 @@
         }
       ]
     ],
-    "owner": "frd30"
-    
+    "owner": "frd30",
+    "extra": {
+      "eas": {
+        "projectId": "6efd5faf-54d2-4b7c-bdae-fc3ae577d73d"
+      }
+    }
   }
 }
