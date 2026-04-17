@@ -8,7 +8,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Icon from "../components/Icon";
 import QRCode from "react-native-qrcode-svg";
 import { COLORS, SPACING, RADIUS } from "../theme";
-import { API_URL, cacheTickets, getCachedTickets, confirmOrangePayment } from "../api";
+import { API_URL, confirmOrangePayment } from "../api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const formatAriary = (a) => `${Number(a).toLocaleString("fr-FR")} Ar`;
@@ -49,11 +49,10 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
     setTimeout(() => setCopiedMotif(false), 2000);
   };
 
-  // --- Ouverture des Applications (Correction Package & Fallback) ---
+  // --- Ouverture des Applications (Logic Corrigée avec Alerte) ---
   const handleOpenApp = async () => {
-    // NOM DU PACKAGE CORRIGÉ POUR ORANGE
     const packageName = isOrange
-      ? "com.orange.orangemoney" 
+      ? "com.orange.orangemoney.madagascar" 
       : "com.airtel.africa.myairtel";
 
     if (Platform.OS === 'android') {
@@ -61,15 +60,27 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
       const marketUrl = `market://details?id=${packageName}`;
 
       try {
-        // Tentative 1 : Ouverture directe via Intent
+        // Tentative 1 : Ouverture directe
         await Linking.openURL(intentUrl);
       } catch (error) {
-        // Tentative 2 : Redirection Play Store (Affichera "Ouvrir" si installée)
-        try {
-          await Linking.openURL(marketUrl);
-        } catch (err) {
-          Alert.alert("Erreur", "Impossible de trouver l'application.");
-        }
+        // Tentative 2 : Alerte avant redirection Play Store
+        Alert.alert(
+          isOrange ? "Orange Money" : "Airtel Money",
+          "Nous allons vous diriger vers l'application officielle pour effectuer votre transfert.",
+          [
+            { 
+              text: "Continuer", 
+              onPress: async () => {
+                try {
+                  await Linking.openURL(marketUrl);
+                } catch (err) {
+                  Alert.alert("Erreur", "Impossible d'ouvrir le Play Store.");
+                }
+              } 
+            },
+            { text: "Annuler", style: "cancel" }
+          ]
+        );
       }
     } else {
       // iOS
@@ -89,6 +100,7 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
     }
     const numero = payment?.merchantCode?.replace(/\s/g, "") || "";
     const montant = Math.round(payment?.amount) || "";
+    // Format : #144*1*1*Numero*Numero*Montant*2#
     const ussdCode = `#144*1*1*${numero}*${numero}*${montant}*2#`;
     const url = `tel:${ussdCode.replace(/#/g, '%23')}`;
 
@@ -219,13 +231,13 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
         <View style={styles.instructCard}>
           <View style={styles.instructRow}>
             <Text style={styles.instructLabel}>{destinationLabel}</Text>
-            <View style={styles.valueWithBtn}>
+            <div style={styles.valueWithBtn}>
               <Text numberOfLines={1} ellipsizeMode="tail" style={styles.merchantValue}>{payment.merchantCode}</Text>
               <TouchableOpacity style={styles.copyBtnSmall} onPress={handleCopyCode}>
                 <Icon name={copiedCode ? "checkmark" : "copy-outline"} size={12} color={copiedCode ? COLORS.success : COLORS.gold} />
                 <Text style={styles.copyBtnTextSmall}>{copiedCode ? "OK" : "Copier"}</Text>
               </TouchableOpacity>
-            </View>
+            </div>
           </View>
           <View style={styles.instructDivider} />
           <View style={styles.instructRow}>
@@ -237,7 +249,7 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
               <View style={styles.instructDivider} />
               <View style={styles.instructRow}>
                 <Text style={styles.instructLabel}>Motif</Text>
-                <View style={styles.valueWithBtn}>
+                <div style={styles.valueWithBtn}>
                   <View style={styles.motifBox}>
                     <Text numberOfLines={1} ellipsizeMode="tail" style={styles.motifText}>{payment.motif}</Text>
                   </View>
@@ -245,7 +257,7 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
                     <Icon name={copiedMotif ? "checkmark" : "copy-outline"} size={12} color={copiedMotif ? COLORS.success : COLORS.gold} />
                     <Text style={styles.copyBtnTextSmall}>{copiedMotif ? "OK" : "Copier"}</Text>
                   </TouchableOpacity>
-                </View>
+                </div>
               </View>
             </>
           )}
@@ -287,6 +299,7 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bgPrimary },
   header: { flexDirection: "row", alignItems: "center", paddingTop: 50, paddingHorizontal: 20, paddingBottom: 10 },
@@ -296,11 +309,8 @@ const styles = StyleSheet.create({
   timerBoxUrgent: { backgroundColor: COLORS.error + "15", borderRadius: RADIUS.md },
   timerText: { color: COLORS.gold, fontSize: 32, fontWeight: "900" },
   timerLabel: { color: COLORS.textMuted, fontSize: 14 },
-  
-  // Nouveau Style pour les informations
   infoCard: { flexDirection: "row", backgroundColor: COLORS.bgCard, padding: 12, borderRadius: 10, borderLeftWidth: 3, borderLeftColor: COLORS.gold, marginBottom: 15, gap: 10, alignItems: 'flex-start' },
   infoText: { color: COLORS.textSecondary, fontSize: 12, flex: 1, lineHeight: 18 },
-
   instructCard: { backgroundColor: COLORS.bgCard, borderRadius: RADIUS.lg, padding: 15, borderWidth: 1, borderColor: COLORS.border, marginBottom: 15 },
   instructRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 10 },
   instructLabel: { color: COLORS.textMuted, fontSize: 13, flexShrink: 0 },
