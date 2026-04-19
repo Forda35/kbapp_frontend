@@ -76,7 +76,7 @@ const PrivacyContent = () => (
     </Section>
 
     <Section title="4. Paiements">
-      KB Events ne stocke aucune information bancaire ou de paiement. Les paiements sont effectués directement via les opérateurs Mobile Money (MVola, Orange Money, Airtel Money).
+      KB Events ne stocke aucune information bancaire ou de paiement. Les paiements sont effectués directement via les opérateurs Mobile Money (MVola, Orange Money).
     </Section>
 
     <Section title="5. Vos droits">

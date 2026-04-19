@@ -33,8 +33,8 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
   };
   const [timeLeft, setTimeLeft] = useState(getInitialTimeLeft);
 
-  const isOrange = payment?.method === "Orange Money";
-  const destinationLabel = isOrange ? "Numéro Orange" : "Code marchand Airtel";
+  const isOrange = true;
+  const destinationLabel = "Numéro Orange";
 
   // --- Fonctions de Copie ---
   const handleCopyCode = () => {
@@ -51,10 +51,7 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
 
   // --- Ouverture des Applications (Correction Package & Fallback) ---
   const handleOpenApp = async () => {
-    // NOM DU PACKAGE CORRIGÉ POUR ORANGE
-    const packageName = isOrange
-      ? "com.orange.orangemoneyafrique" 
-      : "com.airtel.africa.selfcare";
+    const packageName = "com.orange.orangemoneyafrique";
 
     if (Platform.OS === 'android') {
       const intentUrl = `intent:#Intent;package=${packageName};end`;
@@ -73,7 +70,7 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
       }
     } else {
       // iOS
-      const scheme = isOrange ? "orangemoney://" : "airtelmoney://";
+      const scheme = "orangemoney://";
       try {
         await Linking.openURL(scheme);
       } catch (error) {
@@ -83,10 +80,6 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
   };
 
   const handleUSSD = async () => {
-    if (!isOrange) {
-      Alert.alert("Bientôt disponible", "Le USSD Airtel Money sera disponible prochainement.");
-      return;
-    }
     const numero = payment?.merchantCode?.replace(/\s/g, "") || "";
     const montant = Math.round(payment?.amount) || "";
     const ussdCode = `#144*1*1*${numero}*${numero}*${montant}*2#`;
@@ -254,7 +247,7 @@ export default function PaymentWaitingPage({ payment, onSuccess, onExpired, onCa
         <View style={styles.payBtnsRow}>
           <TouchableOpacity style={styles.payBtn} onPress={handleOpenApp}>
             <Icon name="apps-outline" size={20} color={COLORS.gold} />
-            <Text style={styles.payBtnText}>{isOrange ? "App Orange" : "App Airtel"}</Text>
+            <Text style={styles.payBtnText}>App Orange</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.payBtn} onPress={handleUSSD}>
             <Icon name="keypad-outline" size={20} color={COLORS.gold} />

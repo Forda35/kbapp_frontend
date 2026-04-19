@@ -69,7 +69,7 @@ export default function EventsPage() {
       if (hasPending && payment) {
         setPaymentData(payment);
         setSelectedEvent(event);
-        setShowWaiting(true); // Orange et Airtel → même écran d'attente
+        setShowWaiting(true);
         return;
       }
     } catch {}
@@ -94,7 +94,7 @@ export default function EventsPage() {
       if (data.payment) {
         setPayModal(false);
         setPaymentData(data.payment);
-        setShowWaiting(true); // Orange et Airtel → même PaymentWaitingPage
+        setShowWaiting(true);
         setPhone("");
       } else {
         Alert.alert("Erreur", data.message || "Erreur de paiement");
@@ -172,11 +172,12 @@ export default function EventsPage() {
             <Text style={styles.legalTitle}>Informations importantes</Text>
             <ScrollView style={styles.legalScroll} showsVerticalScrollIndicator={false}>
               {[
+                { icon: "warning", title: "Délai de paiement : 30 minutes", text: "Vous disposez de 30 minutes pour finaliser votre paiement. Passé ce délai, la commande sera automatiquement annulée et vous devrez recommencer un nouvel achat. Tout transfert effectué après l'expiration du délai ne pourra pas être pris en charge par l'application." },
                 { icon: "key", title: "Billet unique et personnel", text: "Chaque billet est unique et lié à votre compte. Il n'est pas transférable." },
                 { icon: "ban", title: "Perte ou vol non couverts", text: "En cas de perte ou de vol, nous déclinons toute responsabilité." },
                 { icon: "scale", title: "Fraude interdite", text: "Toute tentative de fraude ou duplication engage votre responsabilité légale." },
                 { icon: "camera-off", title: "Capture d'écran désactivée", text: "La capture d'écran de votre QR code est bloquée pour protéger votre billet." },
-                { icon: "warning", title: "Motif de paiement obligatoire", text: "Un code motif unique valable 30 minutes vous sera fourni. Vous devez l'indiquer lors de votre paiement Mobile Money, sinon le paiement ne sera pas détecté." },
+                { icon: "warning", title: "ID de transaction obligatoire", text: " Vous devez l'indiquer lors de votre paiement Mobile Money, sinon le paiement ne sera pas accepté." },
               ].map((item) => (
                 <View key={item.icon} style={styles.legalItem}>
                   <View style={styles.legalItemIconBox}>
@@ -223,7 +224,7 @@ export default function EventsPage() {
 
             <Text style={styles.payLabel}>Méthode de paiement</Text>
             <View style={styles.methodRow}>
-              {["Orange Money", "Airtel Money"].map((m) => (
+              {["Orange Money"].map((m) => (
                 <TouchableOpacity
                   key={m}
                   style={[styles.methodBtn, payMethod === m && styles.methodBtnActive]}
@@ -242,7 +243,7 @@ export default function EventsPage() {
               </View>
               <TextInput
                 style={styles.phoneInput}
-                placeholder="34 00 000 00"
+                placeholder="(32 ou 37) 00 000 00"
                 placeholderTextColor={COLORS.textMuted}
                 value={phone}
                 onChangeText={setPhone}
@@ -275,7 +276,7 @@ export default function EventsPage() {
         </View>
       </Modal>
 
-      {/* ── Modal attente paiement — Orange ET Airtel ── */}
+      {/* ── Modal attente paiement ── */}
       <Modal visible={showWaiting} animationType="slide">
         {paymentData && (
           <PaymentWaitingPage
